@@ -1,0 +1,10 @@
+# Ignorar arquivos e diretórios sensíveis
+.env
+
+# Ignorar diretórios do sistema
+node_modules
+target
+
+# Ignorar arquivos de build locais
+*.log
+*.tmp
