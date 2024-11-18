@@ -8,7 +8,7 @@ router.post(
   ServiceOrderController.addServiceOrder.bind(ServiceOrderController)
 );
 
-router.post(
+router.put(
   "/serviceorder/update",
   ServiceOrderController.updateServiceOrder.bind(ServiceOrderController)
 );
