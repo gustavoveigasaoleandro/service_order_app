@@ -115,10 +115,9 @@ export class ServiceOrderController {
       const existingServiceOrder = await serviceOrderManager.findService({
         where: { id: req.body.serviceOrder.id, companie_id: access.companyId },
       });
-
       if (
-        !existingServiceOrder ||
-        existingServiceOrder.status === "delivered"
+        !existingServiceOrder.dataValues ||
+        existingServiceOrder.dataValues.status === "delivered"
       ) {
         await transaction.rollback();
         throw new AppError(
@@ -130,7 +129,7 @@ export class ServiceOrderController {
 
       if (req.body.serviceOrder.status === "inProgress") {
         // Verifica se o status anterior era "completed" e apaga os campos relacionados
-        if (existingServiceOrder.status === "completed") {
+        if (existingServiceOrder.dataValues.status === "completed") {
           if (existingServiceOrder.dataValues.transactionIds) {
             const validation = await sendMessageAndWaitForResponse(
               req,
@@ -147,6 +146,12 @@ export class ServiceOrderController {
               "",
               "service_order.stock_response_ex",
               "service_order.stock_response"
+            );
+
+            await serviceOrderManager.updateService(
+              existingServiceOrder,
+              { transactionIds: [] },
+              transaction
             );
 
             if (validation.error) {
